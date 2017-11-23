@@ -1,14 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Linking} from 'react-native';
+import { StyleSheet, Text, View, Button, Linking } from 'react-native';
 
 export default class App extends React.Component {
 
   render() {
     const url = 'http://google.com';
-
+    
     const login = () => {
       console.log('Login clicked!');
-      Linking.canOpenURL(url).then(supported => {
+      Linking.canOpenURL(url).then((supported) => {
         if (!supported) {
           console.log('Can\'t handle url: ' + url);
         } else {
