@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Linking } from 'react-native';
+import { StyleSheet, Text, View, Button, AsyncStorage } from 'react-native';
 import { AuthSession } from 'expo';
 
 const CLIENT_ID = '1e03fbd440fe4252a70719f1950c59c3';
@@ -8,7 +8,13 @@ const scopes = ['user-top-read'];
 export default class App extends React.Component {
   state = {
     result: null,
+    accessToken: null,
   };
+
+  componentDidMount() {
+    const accessToken = AsyncStorage.getItem('@spotipaper:accessToken');
+    this.setState(() => { return { accessToken: accessToken } });
+  }
 
   render() {
     return (
@@ -32,6 +38,11 @@ export default class App extends React.Component {
       `&redirect_uri=${encodeURIComponent(redirectUrl)}`,
     });
     console.log(result);
+    if (result.type == 'success') {
+      let {params: {code}} = result;
+      AsyncStorage.setItem('@spotipaper:accessToken', code);
+    }
+
     this.setState({ result });
   };
 }
