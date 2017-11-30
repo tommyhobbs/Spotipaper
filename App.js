@@ -33,55 +33,58 @@ export default class App extends React.Component {
     // });
   }
 
-  login = async () => {
-    let call1 = await AuthSession.startAsync({
+  login() {
+    this.getCode()
+      .then(this.getTokenPromise)
+      .then((promise) => {
+        promise.json().then((data) => {
+          console.log(data);
+          console.log('access_token: ', data.access_token);
+          console.log('expires_in: ', data.expires_in);
+
+          this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
+          this.getTop();
+        });
+      });
+  }
+
+  getCode = async () => {
+    return await AuthSession.startAsync({
       authUrl:
       `https://accounts.spotify.com/authorize?response_type=code` +
       `&client_id=${CLIENT_ID}` +
       '&scope=' + encodeURIComponent(scopes.join(' ')) +
       `&redirect_uri=${encodeURIComponent(redirectUrl)}`,
     });
-    if (call1.type == 'success') {
-      let {params: {code}} = call1;
-      console.log('code: ', code);
-      const auth = 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET);
-      const body = {
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: redirectUrl
-      };
-      let formBody = [];
-      for (let property in body) {
-        const encodedKey = encodeURIComponent(property);
-        const encodedValue = encodeURIComponent(body[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
-      try {
-        let call2 = fetch('https://accounts.spotify.com/api/token', {
-          method: 'POST',
-          headers: {
-            'Authorization': auth,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: formBody
-        });
-        let promise = await call2;
-        promise.json().then((data) => {
-          console.log('access_token: ', data.access_token);
-          console.log('expires_in: ', data.expires_in);
-          console.log('this', this);
-          () => {
-            console.log('this 2', this);
-            this.setState({accessToken: data.access_token, expiresIn: data.expires_in});
-            this.getTop();
-          };
-        });
-      } catch(error){
-        console.error(error);
-      }
+  }
+
+  getTokenPromise = async (promise) => {
+    const {params: {code}} = promise;
+    console.log('code: ', code);
+    const auth = 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET);
+    const body = {
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUrl
+    };
+    let formBody = [];
+    for (let property in body) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(body[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
     }
-  };
+    formBody = formBody.join("&");
+    let call2 = fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formBody
+    });
+    let tokenPromise = await call2;
+    return tokenPromise;
+  }
 
   getTop = async() => {
     console.log(this.state.accessToken);
@@ -93,9 +96,11 @@ export default class App extends React.Component {
         }
       });
 
-      let data = await response;
-      console.log(data);
-      // this.setState(() => { return { top: resonpseJson} });
+      let topPromise = await response;
+      topPromise.json().then((data) => {
+        console.log(data);
+        this.setState(() => { return { top: data} });
+      });
     } catch(error){
       console.error(error);
     }
@@ -108,7 +113,7 @@ export default class App extends React.Component {
         {this.state.loggedIn ? (
           <View>
             <Text>{JSON.stringify(this.state.accessToken)}</Text>
-            <Text>{this.state.top}</Text>
+            <Text>{JSON.stringify(this.state.top)}</Text>
           </View>
         ) : (
           <Button title="Login with Spotify" onPress={this.login} />
