@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, Image, AsyncStorage } from 'react-native';
 import { AuthSession } from 'expo';
 import Base64 from './Base64';
+import ImageGrid from './ImageGrid';
 
 const CLIENT_ID = '1e03fbd440fe4252a70719f1950c59c3';
 const CLIENT_SECRET = '1a86c6bb04b1498497e5f5a55ec6c229';
@@ -24,13 +25,27 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    // AsyncStorage.getItem('@spotipaper:accessToken', (error, accessToken) => {
-    //   if (accessToken !== null) {
-    //     console.log(accessToken);
-    //     this.setState(() => { return { accessToken: accessToken, loggedIn: true } });
-    //     this.getTop();
-    //   }
-    // });
+    const now = new Date();
+    AsyncStorage.getItem('@Spotipaper:expires', (error, expires) => {
+      if (error) {
+        console.log('no expiresIn');
+        console.log(error);
+      } else if (expires !== null) {
+        if (expires > now) {
+          console.log('token valid and expires ' + expires);
+          AsyncStorage.getItem('@Spotipaper:accessToken', (error, accessToken) => {
+            this.setState(() => { return {loggedIn:true, accessToken: accessToken}});
+            this.getTop();
+          });
+        } else {
+          console.log('token expired ' + expires);
+          AsyncStorage.getItem('@Spotipaper:refreshToken', (error, refreshToken) => {
+            // TODO get refreshToken
+            console.log('refresh_token: ',refreshToken);
+          });
+        }
+      }
+    });
   }
 
   login() {
@@ -39,11 +54,15 @@ export default class App extends React.Component {
       .then((promise) => {
         promise.json().then((data) => {
           if(data.hasOwnProperty('access_token')) {
-            console.log(data);
             console.log('access_token: ', data.access_token);
             console.log('expires_in: ', data.expires_in);
-
+            console.log('refresh_token: ', data.refresh_token);
+            let expires = new Date();
+            expires.setSeconds(expires.getSeconds() + data.expires_in);
             this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
+            AsyncStorage.setItem('@Spotipaper:accessToken', data.access_token);
+            AsyncStorage.setItem('@Spotipaper:expires', expires);
+
             this.getTop();
           } else {
             console.log(data);
@@ -69,7 +88,7 @@ export default class App extends React.Component {
     const auth = 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET);
     const body = {
       grant_type: 'authorization_code',
-      code: code,
+      code: `${code}`,
       redirect_uri: redirectUrl
     };
     let formBody = [];
@@ -103,7 +122,6 @@ export default class App extends React.Component {
 
       let topPromise = await response;
       topPromise.json().then((data) => {
-        console.log(data);
         this.setState(() => { return { top: data} });
       });
     } catch(error){
@@ -116,16 +134,7 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <Text style={styles.title}>Spotipaper</Text>
         {this.state.top ? (
-          <View>
-            { this.state.top.items.map((artist, i) => {
-              return (
-                <View key={'artist'+i}>
-                  <Text key={'artist' + i + '.name'}>{artist.name}</Text>
-                  <Image style={{width: 25, height: 25}} key={'artist' + i + '.image'} source={{uri: artist.images[0].url}} />
-                </View>)
-            })
-            }
-          </View>
+          <ImageGrid objects={this.state.top} />
         ) : (
           <Button title="Login with Spotify" onPress={this.login} />
         )}
