@@ -110,10 +110,12 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Spotipaper</Text>
-        {this.state.loggedIn ? (
+        {this.state.top ? (
           <View>
-            <Text>{JSON.stringify(this.state.accessToken)}</Text>
-            <Text>{JSON.stringify(this.state.top)}</Text>
+            { this.state.top.items.map((artist) => {
+              return (<Text key={1}>{artist.name}</Text>)
+            })
+            }
           </View>
         ) : (
           <Button title="Login with Spotify" onPress={this.login} />
