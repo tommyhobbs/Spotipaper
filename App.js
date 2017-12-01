@@ -112,8 +112,8 @@ export default class App extends React.Component {
         <Text style={styles.title}>Spotipaper</Text>
         {this.state.top ? (
           <View>
-            { this.state.top.items.map((artist) => {
-              return (<Text key={1}>{artist.name}</Text>)
+            { this.state.top.items.map((artist, i) => {
+              return (<Text key={i}>{artist.name}</Text>)
             })
             }
           </View>
