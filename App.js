@@ -38,14 +38,19 @@ export default class App extends React.Component {
       .then(this.getTokenPromise)
       .then((promise) => {
         promise.json().then((data) => {
-          console.log(data);
-          console.log('access_token: ', data.access_token);
-          console.log('expires_in: ', data.expires_in);
+          if(data.hasAttribute('access_token')) {
+            console.log(data);
+            console.log('access_token: ', data.access_token);
+            console.log('expires_in: ', data.expires_in);
 
-          this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
-          this.getTop();
+            this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
+            this.getTop();
+          } else {
+            console.log(data);
+          }
         });
-      });
+      })
+      .catch((error) => { console.log(error)});
   }
 
   getCode = async () => {
