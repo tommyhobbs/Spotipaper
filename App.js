@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, AsyncStorage } from 'react-native';
 import { AuthSession } from 'expo';
 import Base64 from './Base64';
 
@@ -38,7 +38,7 @@ export default class App extends React.Component {
       .then(this.getTokenPromise)
       .then((promise) => {
         promise.json().then((data) => {
-          if(data.hasAttribute('access_token')) {
+          if(data.hasOwnProperty('access_token')) {
             console.log(data);
             console.log('access_token: ', data.access_token);
             console.log('expires_in: ', data.expires_in);
@@ -118,7 +118,11 @@ export default class App extends React.Component {
         {this.state.top ? (
           <View>
             { this.state.top.items.map((artist, i) => {
-              return (<Text key={i}>{artist.name}</Text>)
+              return (
+                <View key={'artist'+i}>
+                  <Text key={'artist' + i + '.name'}>{artist.name}</Text>
+                  <Image style={{width: 25, height: 25}} key={'artist' + i + '.image'} source={{uri: artist.images[0].url}} />
+                </View>)
             })
             }
           </View>
@@ -138,7 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 19,
+    fontSize: 24,
     fontWeight: 'bold',
+    paddingBottom: 20
   },
 });
