@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch} from 'react-native';
 import { AuthSession } from 'expo';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
@@ -17,6 +17,7 @@ export default class App extends React.Component {
     loggedIn: false,
     top: null,
     slider: 5,
+    tracks: false,
   };
 
   constructor(props){
@@ -134,8 +135,10 @@ export default class App extends React.Component {
   }
 
   getTop = async() => {
+    console.log('getTop tracks :', this.state.tracks);
+    const searchType = this.state.tracks ? 'tracks' : 'artists';
     try {
-      let response = fetch('https://api.spotify.com/v1/me/top/artists?limit=50', {
+      let response = fetch('https://api.spotify.com/v1/me/top/' + searchType + '?limit=50', {
         method: 'GET',
         headers: {
           'authorization': 'Bearer ' + this.state.accessToken
@@ -159,16 +162,24 @@ export default class App extends React.Component {
             <ImageGrid
               objects={this.state.top}
               dimensions={this.state.dimensions}
-              slider={this.state.slider}/>
+              slider={this.state.slider} />
             <View style={styles.floatView}>
               <Text style={styles.title}>Spotipaper</Text>
+              <Text>Tile size</Text>
               <Slider
-                width={this.state.dimensions.width-50}
+                width={this.state.dimensions.width-100}
                 step={1}
                 minimumValue={1}
-                maximumValue={10}
+                maximumValue={6}
                 value={this.state.slider}
                 onValueChange={(val) => this.setState({ slider: val })} />
+              <Text>Top tracks / Top artists</Text>
+              <Switch
+                onValueChange={(val) => {
+                  this.setState({ tracks: val });
+                  this.getTop();
+                }}
+                value= {this.state.tracks} />
             </View>
           </View>
         ) : (

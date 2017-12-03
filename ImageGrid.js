@@ -5,18 +5,18 @@ import PropTypes from 'prop-types';
 function ImageGrid(props) {
   const {objects , dimensions: {width, height}, slider} = props;
   const tileSize = width < height ? width/slider : width/slider;
-  console.log (`dimensions: ${width} x ${height}, titleSize: ${tileSize}`);
+  // console.log (`dimensions: ${width} x ${height}, titleSize: ${tileSize}`);
 
   return (
     <View style={styles.container}>
     {
-      objects.items.map((artist, i) => {
-        if (artist !== null) {
+      objects.items.map((item, i) => {
+        if (item.hasOwnProperty('images')) {
           return (
             <Image
               style={{width: tileSize, height: tileSize}}
               key={i}
-              source={ artist.images.map( (image) => {
+              source={ item.images.map( (image) => {
                 return {
                   uri: image.url,
                   width:image.width,
@@ -24,6 +24,19 @@ function ImageGrid(props) {
                 }
               })} />
           );
+        } else if (item.hasOwnProperty('album')) {
+          return (
+            <Image
+              style={{width: tileSize, height: tileSize}}
+              key={i}
+              source={ item.album.images.map( (image) => {
+                return {
+                  uri: image.url,
+                  width:image.width,
+                  height:image.height
+                }
+              })} />
+            );
         }
       })
     }
