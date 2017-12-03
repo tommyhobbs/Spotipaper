@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider } from 'react-native';
 import { AuthSession } from 'expo';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
@@ -12,15 +12,19 @@ const redirectUrl = AuthSession.getRedirectUrl();
 export default class App extends React.Component {
   state = {
     accessToken: null,
+    dimensions: Dimensions.get('window'),
     error: null,
-    loggedIn:false,
+    loggedIn: false,
     top: null,
+    slider: 5,
   };
 
   constructor(props){
     super(props);
     this.login = this.login.bind(this);
     this.getTop = this.getTop.bind(this);
+    this.refreshDimensions = this.refreshDimensions.bind(this);
+    this.parseLogin = this.parseLogin.bind(this);
   }
 
   componentWillMount() {
@@ -47,6 +51,11 @@ export default class App extends React.Component {
       }
     });
   }
+
+  refreshDimensions() {
+    this.setState(() => { return {dimensions: Dimensions.get('window')}});
+  }
+
 
   login() {
     this.getCodePromise()
@@ -125,9 +134,8 @@ export default class App extends React.Component {
   }
 
   getTop = async() => {
-    console.log(this.state.accessToken);
     try {
-      let response = fetch('https://api.spotify.com/v1/me/top/artists', {
+      let response = fetch('https://api.spotify.com/v1/me/top/artists?limit=50', {
         method: 'GET',
         headers: {
           'authorization': 'Bearer ' + this.state.accessToken
@@ -139,18 +147,35 @@ export default class App extends React.Component {
         this.setState(() => { return { top: data} });
       });
     } catch(error){
-      console.error(error);
+        this.setState(() => { return {error: error}});
     }
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Spotipaper</Text>
+      <View style={styles.container} onLayout={this.refreshDimensions}>
         {this.state.top ? (
-          <ImageGrid objects={this.state.top} />
+          <View style={styles.container}>
+            <ImageGrid
+              objects={this.state.top}
+              dimensions={this.state.dimensions}
+              slider={this.state.slider}/>
+            <View style={styles.floatView}>
+              <Text style={styles.title}>Spotipaper</Text>
+              <Slider
+                width={this.state.dimensions.width-50}
+                step={1}
+                minimumValue={1}
+                maximumValue={10}
+                value={this.state.slider}
+                onValueChange={(val) => this.setState({ slider: val })} />
+            </View>
+          </View>
         ) : (
-          <Button title="Login with Spotify" onPress={this.login} />
+          <View>
+            <Text style={styles.title}>Spotipaper</Text>
+            <Button title="Login with Spotify" onPress={this.login} />
+          </View>
         )}
       </View>
     );
@@ -167,6 +192,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    paddingBottom: 20
+    padding: 20
+  },
+  floatView: {
+    flex: 1,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.7)',
   },
 });

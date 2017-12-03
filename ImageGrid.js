@@ -3,7 +3,9 @@ import { View, Image, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 function ImageGrid(props) {
-  const {objects} = props;
+  const {objects , dimensions: {width, height}, slider} = props;
+  const tileSize = width < height ? width/slider : width/slider;
+  console.log (`dimensions: ${width} x ${height}, titleSize: ${tileSize}`);
 
   return (
     <View style={styles.container}>
@@ -12,7 +14,7 @@ function ImageGrid(props) {
         if (artist !== null) {
           return (
             <Image
-              style={{width: 100, height: 100}}
+              style={{width: tileSize, height: tileSize}}
               key={i}
               source={ artist.images.map( (image) => {
                 return {
@@ -40,6 +42,9 @@ const styles = StyleSheet.create({
 });
 
 ImageGrid.propTypes = {
+  objects: PropTypes.object.isRequired,
+  dimensions: PropTypes.object.isRequired,
+  slider: PropTypes.number.isRequired,
 };
 
 export default ImageGrid;
