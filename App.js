@@ -12,8 +12,7 @@ const redirectUrl = AuthSession.getRedirectUrl();
 export default class App extends React.Component {
   state = {
     accessToken: null,
-    code: null,
-    expiresIn: null,
+    error: null,
     loggedIn:false,
     top: null,
   };
@@ -24,14 +23,14 @@ export default class App extends React.Component {
     this.getTop = this.getTop.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const now = new Date();
-    AsyncStorage.getItem('@Spotipaper:expires', (error, expires) => {
+    AsyncStorage.getItem('@Spotipaper:expires', (error, expiresString) => {
       if (error) {
-        console.log('no expiresIn');
-        console.log(error);
-      } else if (expires !== null) {
-        if (expires > now) {
+        console.log('no expirery time set. Likely no accessToken');
+      } else if (expiresString !== null) {
+        const expires = new Date(expiresString);
+        if (expires.getTime() > now.getTime()) {
           console.log('token valid and expires ' + expires);
           AsyncStorage.getItem('@Spotipaper:accessToken', (error, accessToken) => {
             this.setState(() => { return {loggedIn:true, accessToken: accessToken}});
@@ -40,8 +39,9 @@ export default class App extends React.Component {
         } else {
           console.log('token expired ' + expires);
           AsyncStorage.getItem('@Spotipaper:refreshToken', (error, refreshToken) => {
-            // TODO get refreshToken
-            console.log('refresh_token: ',refreshToken);
+            this.getRefreshPromise(refreshToken)
+              .then(this.parseLogin)
+              .catch((error) => { this.setState(() => { return {error: error}});});
           });
         }
       }
@@ -49,30 +49,13 @@ export default class App extends React.Component {
   }
 
   login() {
-    this.getCode()
+    this.getCodePromise()
       .then(this.getTokenPromise)
-      .then((promise) => {
-        promise.json().then((data) => {
-          if(data.hasOwnProperty('access_token')) {
-            console.log('access_token: ', data.access_token);
-            console.log('expires_in: ', data.expires_in);
-            console.log('refresh_token: ', data.refresh_token);
-            let expires = new Date();
-            expires.setSeconds(expires.getSeconds() + data.expires_in);
-            this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
-            AsyncStorage.setItem('@Spotipaper:accessToken', data.access_token);
-            AsyncStorage.setItem('@Spotipaper:expires', expires);
-
-            this.getTop();
-          } else {
-            console.log(data);
-          }
-        });
-      })
-      .catch((error) => { console.log(error)});
+      .then(this.parseLogin)
+      .catch((error) => { this.setState(() => { return {error: error}});});
   }
 
-  getCode = async () => {
+  getCodePromise = async () => {
     return await AuthSession.startAsync({
       authUrl:
       `https://accounts.spotify.com/authorize?response_type=code` +
@@ -84,30 +67,61 @@ export default class App extends React.Component {
 
   getTokenPromise = async (promise) => {
     const {params: {code}} = promise;
-    console.log('code: ', code);
-    const auth = 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET);
-    const body = {
-      grant_type: 'authorization_code',
-      code: `${code}`,
-      redirect_uri: redirectUrl
-    };
-    let formBody = [];
-    for (let property in body) {
-      const encodedKey = encodeURIComponent(property);
-      const encodedValue = encodeURIComponent(body[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    let call2 = fetch('https://accounts.spotify.com/api/token', {
+    let call = fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
-        'Authorization': auth,
+        'Authorization': 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET),
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: formBody
+      body: this.encodeToForm({
+        grant_type: 'authorization_code',
+        code: `${code}`,
+        redirect_uri: redirectUrl
+      })
     });
-    let tokenPromise = await call2;
-    return tokenPromise;
+    let tokenPromise = await call;
+    return tokenPromise.json();
+  }
+
+  getRefreshPromise = async (refreshToken) => {
+    let call = fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + Base64.btoa(CLIENT_ID + ':' + CLIENT_SECRET),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: this.encodeToForm({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      })
+    });
+    let tokenPromise = await call;
+    return tokenPromise.json();
+  }
+
+  parseLogin(data) {
+    if(data.hasOwnProperty('access_token')) {
+      console.log('access_token: ', data.access_token);
+      let expires = new Date();
+      expires.setSeconds(expires.getSeconds() + data.expires_in);
+      this.setState(() => { return {loggedIn:true, accessToken: data.access_token}});
+      AsyncStorage.setItem('@Spotipaper:accessToken', data.access_token);
+      AsyncStorage.setItem('@Spotipaper:expires', expires);
+      AsyncStorage.setItem('@Spotipaper:refreshToken', data.refresh_token);
+      this.getTop();
+    } else {
+      this.setState(() => { return {error: data.error}});
+    }
+  }
+
+  encodeToForm(object) {
+    let formBody = [];
+    for (let property in object) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(object[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+     return formBody.join("&");
   }
 
   getTop = async() => {
