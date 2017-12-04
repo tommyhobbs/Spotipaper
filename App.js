@@ -17,7 +17,7 @@ export default class App extends React.Component {
     loggedIn: false,
     top: null,
     slider: 5,
-    tracks: false,
+    type: 'artists',
   };
 
   constructor(props){
@@ -135,10 +135,9 @@ export default class App extends React.Component {
   }
 
   getTop = async() => {
-    console.log('getTop tracks :', this.state.tracks);
-    const searchType = this.state.tracks ? 'tracks' : 'artists';
+    console.log('getting top: ', this.state.type)
     try {
-      let response = fetch('https://api.spotify.com/v1/me/top/' + searchType + '?limit=50', {
+      let response = fetch('https://api.spotify.com/v1/me/top/' + this.state.type + '?limit=50', {
         method: 'GET',
         headers: {
           'authorization': 'Bearer ' + this.state.accessToken
@@ -175,11 +174,12 @@ export default class App extends React.Component {
                 onValueChange={(val) => this.setState({ slider: val })} />
               <Text>Top tracks / Top artists</Text>
               <Switch
-                onValueChange={(val) => {
-                  this.setState({ tracks: val });
-                  this.getTop();
-                }}
-                value= {this.state.tracks} />
+                onValueChange={(value) => {
+                  //set the type of search and only call getTop upon completion
+                  this.setState(() => { return { type: value ? 'artists' : 'tracks' }},
+                  () => {this.getTop()})}
+                }
+                value={this.state.type === 'artists'} />
             </View>
           </View>
         ) : (
