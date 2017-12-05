@@ -19,6 +19,7 @@ export default class App extends React.Component {
     top: null,
     slider: 4,
     type: 'artists',
+    showMenu: true,
   };
 
   constructor(props){
@@ -154,15 +155,19 @@ export default class App extends React.Component {
     }
   }
 
+  toggleMenu() {
+    this.setState((previousState) => { return { menu:!previousState.showMenu}});
+  }
+
   save() {
-    captureScreen({
-      format: "jpg",
-      quality: 1
-    })
-    .then(
-      uri => console.log("Image saved to", uri),
-      error => console.error("Oops, snapshot failed", error)
-    );
+    // captureScreen({
+    //   format: "jpg",
+    //   quality: 1
+    // })
+    // .then(
+    //   uri => console.log("Image saved to", uri),
+    //   error => console.error("Oops, snapshot failed", error)
+    // );
     // CameraRoll.saveToCameraRoll('https://www.w3schools.com/images/w3schools_green.jpg')
     //   .then(Alert.alert('Success', 'Photo added to camera roll!'))
     //   .catch(err => console.log('err:', err));
@@ -176,27 +181,30 @@ export default class App extends React.Component {
             <ImageGrid
               objects={this.state.top}
               dimensions={this.state.dimensions}
-              slider={this.state.slider} />
-            <View style={styles.floatView}>
-              <Text style={styles.title}>Spotipaper</Text>
-              <Text>Tile size</Text>
-              <Slider
-                width={this.state.dimensions.width-100}
-                step={1}
-                minimumValue={1}
-                maximumValue={6}
-                value={this.state.slider}
-                onValueChange={(val) => this.setState({ slider: val })} />
-              <Text>Top tracks / Top artists</Text>
-              <Switch
-                onValueChange={(value) => {
-                  //set the type of search and only call getTop upon completion
-                  this.setState(() => { return { type: value ? 'artists' : 'tracks' }},
-                  () => {this.getTop()})}
-                }
-                value={this.state.type === 'artists'} />
-                <Button title="Save to Camera Roll" onPress={this.save} />
-            </View>
+              slider={this.state.slider}
+              onClick={this.toggleMenu} />
+            { this.state.showMenu ? (
+              <View style={styles.floatView}>
+                <Text style={styles.title}>Spotipaper</Text>
+                <Text>Tile size</Text>
+                <Slider
+                  width={this.state.dimensions.width-100}
+                  step={1}
+                  minimumValue={1}
+                  maximumValue={6}
+                  value={this.state.slider}
+                  onValueChange={(val) => this.setState({ slider: val })} />
+                <Text>Top tracks / Top artists</Text>
+                <Switch
+                  onValueChange={(value) => {
+                    //set the type of search and only call getTop upon completion
+                    this.setState(() => { return { type: value ? 'artists' : 'tracks' }},
+                    () => {this.getTop()})}
+                  }
+                  value={this.state.type === 'artists'} />
+                  {/*<Button title="Save to Camera Roll" onPress={this.save} /> */}
+              </View> )
+              : null }
           </View>
         ) : (
           <View>

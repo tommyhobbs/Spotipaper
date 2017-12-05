@@ -1,7 +1,7 @@
 {
   "expo": {
    "name": "Spotipaper",
-   "icon": "./spotpaper-icon.png",
+   "icon": "./spotipaper-icon.png",
    "version": "1.0.0",
    "slug": "spotipaper",
    "sdkVersion": "22.0.0",
