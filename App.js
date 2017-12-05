@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch, CameraRoll} from 'react-native';
 import { AuthSession } from 'expo';
+import { captureScreen } from 'react-native-view-shot';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
 
@@ -16,7 +17,7 @@ export default class App extends React.Component {
     error: null,
     loggedIn: false,
     top: null,
-    slider: 5,
+    slider: 4,
     type: 'artists',
   };
 
@@ -153,6 +154,20 @@ export default class App extends React.Component {
     }
   }
 
+  save() {
+    captureScreen({
+      format: "jpg",
+      quality: 1
+    })
+    .then(
+      uri => console.log("Image saved to", uri),
+      error => console.error("Oops, snapshot failed", error)
+    );
+    // CameraRoll.saveToCameraRoll('https://www.w3schools.com/images/w3schools_green.jpg')
+    //   .then(Alert.alert('Success', 'Photo added to camera roll!'))
+    //   .catch(err => console.log('err:', err));
+  }
+
   render() {
     return (
       <View style={styles.container} onLayout={this.refreshDimensions}>
@@ -180,6 +195,7 @@ export default class App extends React.Component {
                   () => {this.getTop()})}
                 }
                 value={this.state.type === 'artists'} />
+                <Button title="Save to Camera Roll" onPress={this.save} />
             </View>
           </View>
         ) : (

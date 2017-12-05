@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "22.0.0"
+   "name": "Spotipaper",
+   "icon": "./spotpaper-icon.png",
+   "version": "1.0.0",
+   "slug": "spotipaper",
+   "sdkVersion": "22.0.0",
+   "ios": {
+     "bundleIdentifier": "com.tomhobbs.spotipaper"
+   },
+   "android": {
+     "package": "com.tomhobbs.spotipaper"
+   }
   }
 }
