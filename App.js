@@ -41,13 +41,15 @@ export default class App extends React.Component {
           console.log('token valid and expires ' + expires);
           AsyncStorage.getItem('@Spotipaper:accessToken', (error, accessToken) => {
             this.setState(() => { return {loggedIn:true, accessToken: accessToken}});
-            this.getTop();
+              this.getTop()
+              .catch((error) => { this.setState(() => { return {error: error}});});
           });
         } else {
           console.log('token expired ' + expires);
           AsyncStorage.getItem('@Spotipaper:refreshToken', (error, refreshToken) => {
             this.getRefreshPromise(refreshToken)
               .then(this.parseLogin)
+              .then(this.getTop)
               .catch((error) => { this.setState(() => { return {error: error}});});
           });
         }
@@ -64,6 +66,7 @@ export default class App extends React.Component {
     this.getCodePromise()
       .then(this.getTokenPromise)
       .then(this.parseLogin)
+      .then(this.getTop)
       .catch((error) => { this.setState(() => { return {error: error}});});
   }
 
@@ -120,7 +123,6 @@ export default class App extends React.Component {
       AsyncStorage.setItem('@Spotipaper:accessToken', data.access_token);
       AsyncStorage.setItem('@Spotipaper:expires', expires);
       AsyncStorage.setItem('@Spotipaper:refreshToken', data.refresh_token);
-      this.getTop();
     } else {
       this.setState(() => { return {error: data.error}});
     }
@@ -137,7 +139,7 @@ export default class App extends React.Component {
   }
 
   getTop = async() => {
-    console.log('getting top: ', this.state.type)
+    console.log('getting top: ', this.state.type);
     try {
       let response = fetch('https://api.spotify.com/v1/me/top/' + this.state.type + '?limit=50', {
         method: 'GET',
