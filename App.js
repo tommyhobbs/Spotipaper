@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch, CameraRoll} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch, StatusBar} from 'react-native';
 import { AuthSession } from 'expo';
-// import { captureScreen } from 'react-native-view-shot';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
 
@@ -177,6 +176,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container} onLayout={this.refreshDimensions}>
+        <StatusBar hidden={!this.state.showMenu} />
         {this.state.top ? (
           <View style={styles.container}>
             <ImageGrid
