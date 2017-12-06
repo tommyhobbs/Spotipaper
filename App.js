@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch, CameraRoll} from 'react-native';
 import { AuthSession } from 'expo';
-import { captureScreen } from 'react-native-view-shot';
+// import { captureScreen } from 'react-native-view-shot';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
 
@@ -28,6 +28,7 @@ export default class App extends React.Component {
     this.getTop = this.getTop.bind(this);
     this.refreshDimensions = this.refreshDimensions.bind(this);
     this.parseLogin = this.parseLogin.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentWillMount() {
@@ -156,7 +157,7 @@ export default class App extends React.Component {
   }
 
   toggleMenu() {
-    this.setState((previousState) => { return { menu:!previousState.showMenu}});
+    this.setState((previousState) => { return { showMenu:!previousState.showMenu}});
   }
 
   save() {
