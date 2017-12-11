@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 function ImageGrid(props) {
   const {objects , dimensions: {width, height}, slider, onClick} = props;
   const tileSize = width < height ? width/slider : width/slider;
-  // console.log (`dimensions: ${width} x ${height}, titleSize: ${tileSize}`);
 
   return (
     <TouchableHighlight onPress={onClick}>

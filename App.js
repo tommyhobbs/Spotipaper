@@ -1,7 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Dimensions, AsyncStorage, Slider, Switch, CameraRoll} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Dimensions,
+  AsyncStorage,
+  Slider,
+  Switch,
+} from 'react-native';
 import { AuthSession } from 'expo';
-import { captureScreen } from 'react-native-view-shot';
 import Base64 from './Base64';
 import ImageGrid from './ImageGrid';
 
@@ -34,16 +42,19 @@ export default class App extends React.Component {
     const now = new Date();
     AsyncStorage.getItem('@Spotipaper:expires', (error, expiresString) => {
       if (error) {
+        // eslint-disable-next-line no-console
         console.log('no expirery time set. Likely no accessToken');
       } else if (expiresString !== null) {
         const expires = new Date(expiresString);
         if (expires.getTime() > now.getTime()) {
+          // eslint-disable-next-line no-console
           console.log('token valid and expires ' + expires);
           AsyncStorage.getItem('@Spotipaper:accessToken', (error, accessToken) => {
             this.setState(() => { return {loggedIn:true, accessToken: accessToken}});
             this.getTop();
           });
         } else {
+          // eslint-disable-next-line no-console
           console.log('token expired ' + expires);
           AsyncStorage.getItem('@Spotipaper:refreshToken', (error, refreshToken) => {
             this.getRefreshPromise(refreshToken)
@@ -64,7 +75,11 @@ export default class App extends React.Component {
     this.getCodePromise()
       .then(this.getTokenPromise)
       .then(this.parseLogin)
-      .catch((error) => { this.setState(() => { return {error: error}});});
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        this.setState(() => { return {error: error}});
+      });
   }
 
   getCodePromise = async () => {
@@ -113,6 +128,7 @@ export default class App extends React.Component {
 
   parseLogin(data) {
     if(data.hasOwnProperty('access_token')) {
+      // eslint-disable-next-line no-console
       console.log('access_token: ', data.access_token);
       let expires = new Date();
       expires.setSeconds(expires.getSeconds() + data.expires_in);
@@ -137,6 +153,7 @@ export default class App extends React.Component {
   }
 
   getTop = async() => {
+    // eslint-disable-next-line no-console
     console.log('getting top: ', this.state.type)
     try {
       let response = fetch('https://api.spotify.com/v1/me/top/' + this.state.type + '?limit=50', {
@@ -210,6 +227,7 @@ export default class App extends React.Component {
           <View>
             <Text style={styles.title}>Spotipaper</Text>
             <Button title="Login with Spotify" onPress={this.login} />
+            <Text style={styles.title}>{this.error}</Text>
           </View>
         )}
       </View>
