@@ -8,6 +8,7 @@ import {
   AsyncStorage,
   Slider,
   Switch,
+  StatusBar,
 } from 'react-native';
 import { AuthSession } from 'expo';
 import Base64 from './Base64';
@@ -36,6 +37,7 @@ export default class App extends React.Component {
     this.getTop = this.getTop.bind(this);
     this.refreshDimensions = this.refreshDimensions.bind(this);
     this.parseLogin = this.parseLogin.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   componentWillMount() {
@@ -51,7 +53,8 @@ export default class App extends React.Component {
           console.log('token valid and expires ' + expires);
           AsyncStorage.getItem('@Spotipaper:accessToken', (error, accessToken) => {
             this.setState(() => { return {loggedIn:true, accessToken: accessToken}});
-            this.getTop();
+              this.getTop()
+              .catch((error) => { this.setState(() => { return {error: error}});});
           });
         } else {
           // eslint-disable-next-line no-console
@@ -59,6 +62,7 @@ export default class App extends React.Component {
           AsyncStorage.getItem('@Spotipaper:refreshToken', (error, refreshToken) => {
             this.getRefreshPromise(refreshToken)
               .then(this.parseLogin)
+              .then(this.getTop)
               .catch((error) => { this.setState(() => { return {error: error}});});
           });
         }
@@ -75,6 +79,7 @@ export default class App extends React.Component {
     this.getCodePromise()
       .then(this.getTokenPromise)
       .then(this.parseLogin)
+      .then(this.getTop)
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -136,7 +141,6 @@ export default class App extends React.Component {
       AsyncStorage.setItem('@Spotipaper:accessToken', data.access_token);
       AsyncStorage.setItem('@Spotipaper:expires', expires);
       AsyncStorage.setItem('@Spotipaper:refreshToken', data.refresh_token);
-      this.getTop();
     } else {
       this.setState(() => { return {error: data.error}});
     }
@@ -173,26 +177,13 @@ export default class App extends React.Component {
   }
 
   toggleMenu() {
-    this.setState((previousState) => { return { menu:!previousState.showMenu}});
-  }
-
-  save() {
-    // captureScreen({
-    //   format: "jpg",
-    //   quality: 1
-    // })
-    // .then(
-    //   uri => console.log("Image saved to", uri),
-    //   error => console.error("Oops, snapshot failed", error)
-    // );
-    // CameraRoll.saveToCameraRoll('https://www.w3schools.com/images/w3schools_green.jpg')
-    //   .then(Alert.alert('Success', 'Photo added to camera roll!'))
-    //   .catch(err => console.log('err:', err));
+    this.setState((previousState) => { return { showMenu:!previousState.showMenu}});
   }
 
   render() {
     return (
       <View style={styles.container} onLayout={this.refreshDimensions}>
+        <StatusBar hidden={!this.state.showMenu} />
         {this.state.top ? (
           <View style={styles.container}>
             <ImageGrid
@@ -219,7 +210,6 @@ export default class App extends React.Component {
                     () => {this.getTop()})}
                   }
                   value={this.state.type === 'artists'} />
-                  {/*<Button title="Save to Camera Roll" onPress={this.save} /> */}
               </View> )
               : null }
           </View>
