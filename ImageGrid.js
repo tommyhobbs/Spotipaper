@@ -3,7 +3,15 @@ import { View, TouchableHighlight, Image, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
 function ImageGrid(props) {
-  const {objects , dimensions: {width, height}, slider, onClick} = props;
+  const {
+    objects,
+    dimensions: {
+      width,
+      height,
+    },
+    slider,
+    onClick,
+  } = props;
   const tileSize = width < height ? width/slider : width/slider;
 
   return (

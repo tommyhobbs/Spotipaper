@@ -17,7 +17,6 @@ import ImageGrid from './ImageGrid';
 const CLIENT_ID = '1e03fbd440fe4252a70719f1950c59c3';
 const CLIENT_SECRET = '1a86c6bb04b1498497e5f5a55ec6c229';
 const scopes = ['user-top-read'];
-const redirectUrl = AuthSession.getRedirectUrl();
 
 export default class App extends React.Component {
   state = {
@@ -88,6 +87,7 @@ export default class App extends React.Component {
   }
 
   getCodePromise = async () => {
+    const redirectUrl = AuthSession.getRedirectUrl();
     return await AuthSession.startAsync({
       authUrl:
       `https://accounts.spotify.com/authorize?response_type=code` +
