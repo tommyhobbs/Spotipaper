@@ -7,7 +7,7 @@ const testProps = {
   objects: {items:[]},
   dimensions: {},
   slider: 5,
-}
+};
 
 it('renders ImageGrid without crashing', () => {
   const rendered = renderer.create(<ImageGrid {...testProps}/>).toJSON();
