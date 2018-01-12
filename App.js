@@ -98,6 +98,7 @@ export default class App extends React.Component {
   }
 
   getTokenPromise = async (promise) => {
+    const redirectUrl = AuthSession.getRedirectUrl();
     const {params: {code}} = promise;
     let call = fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
