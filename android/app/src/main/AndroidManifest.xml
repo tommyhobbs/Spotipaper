@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.tomhobbs.spotipaper"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application
+    android:name=".MainApplication"
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:supportsRtl="true">
+    <activity android:name=".MainActivity"
+              android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+              android:theme="@style/Theme.Exponent.Light"
+              android:windowSoftInputMode="adjustResize">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+
+      <intent-filter>
+        <data android:scheme="exp62c6ab88470c4310996780a6bc58827f"/>
+
+        <action android:name="android.intent.action.VIEW"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+      </intent-filter>
+    </activity>
+
+    <!-- The Facebook SDK runs FacebookInitProvider on startup and crashes if there isn't an ID here -->
+    <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="fb0"/>
+  </application>
+  <uses-permission tools:node="remove" android:name="android.permission.READ_CALENDAR" />
+  <uses-permission tools:node="remove" android:name="android.permission.WRITE_CALENDAR" />
+  <uses-permission tools:node="remove" android:name="android.permission.CAMERA" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_CONTACTS" />
+  <uses-permission tools:node="remove" android:name="android.permission.WRITE_CONTACTS" />
+  <uses-permission tools:node="remove" android:name="android.permission.GET_ACCOUNTS" />
+  <uses-permission tools:node="remove" android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission tools:node="remove" android:name="android.permission.CALL_PHONE" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_CALL_LOG" />
+  <uses-permission tools:node="remove" android:name="android.permission.WRITE_CALL_LOG" />
+  <uses-permission tools:node="remove" android:name="android.permission.ADD_VOICEMAIL" />
+  <uses-permission tools:node="remove" android:name="android.permission.USE_SIP" />
+  <uses-permission tools:node="remove" android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+  <uses-permission tools:node="remove" android:name="android.permission.BODY_SENSORS" />
+  <uses-permission tools:node="remove" android:name="android.permission.SEND_SMS" />
+  <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_SMS" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_SMS" />
+  <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_WAP_PUSH" />
+  <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_MMS" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission tools:node="remove" android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+</manifest>

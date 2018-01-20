@@ -1,17 +1,25 @@
 {
   "expo": {
-   "name": "Spotipaper",
-   "icon": "./spotipaper-icon.png",
-   "version": "1.0.0",
-   "slug": "spotipaper",
-   "sdkVersion": "23.0.0",
-   "githubUrl": "https://github.com/tommyhobbs/Spotipaper",
-   "ios": {
-     "bundleIdentifier": "com.tomhobbs.spotipaper"
-   },
-   "android": {
-     "package": "com.tomhobbs.spotipaper",
-     "permissions": []
-   }
+    "name": "Spotipaper",
+    "icon": "./spotipaper-icon.png",
+    "version": "1.0.0",
+    "slug": "spotipaper",
+    "sdkVersion": "23.0.0",
+    "githubUrl": "https://github.com/tommyhobbs/Spotipaper",
+    "ios": {
+      "bundleIdentifier": "com.tomhobbs.spotipaper",
+      "publishBundlePath": "ios/spotipaper/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/spotipaper/Supporting/shell-app-manifest.json"
+    },
+    "android": {
+      "package": "com.tomhobbs.spotipaper",
+      "permissions": []
+    },
+    "isDetached": true,
+    "detach": {
+      "scheme": "exp62c6ab88470c4310996780a6bc58827f",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.1.4-sdk23.0.0-f67c5bc3-4a27-40f6-8686-91e8f868a145.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.1.2-sdk23.0.0-d47f172b-1ed3-4c8f-9e48-239052c678b6.tar.gz"
+    }
   }
 }
