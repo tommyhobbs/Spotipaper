@@ -5,11 +5,13 @@
    "version": "1.0.0",
    "slug": "spotipaper",
    "sdkVersion": "23.0.0",
+   "githubUrl": "https://github.com/tommyhobbs/Spotipaper",
    "ios": {
      "bundleIdentifier": "com.tomhobbs.spotipaper"
    },
    "android": {
-     "package": "com.tomhobbs.spotipaper"
+     "package": "com.tomhobbs.spotipaper",
+     "permissions": []
    }
   }
 }
