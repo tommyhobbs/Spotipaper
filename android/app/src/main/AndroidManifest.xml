@@ -29,6 +29,9 @@
       </intent-filter>
     </activity>
 
+    <activity android:name="host.exp.exponent.chrometabs.ChromeTabsManagerActivity">
+    </activity>
+
     <!-- The Facebook SDK runs FacebookInitProvider on startup and crashes if there isn't an ID here -->
     <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="fb0"/>
   </application>
@@ -54,5 +57,32 @@
   <uses-permission tools:node="remove" android:name="android.permission.RECEIVE_MMS" />
   <uses-permission tools:node="remove" android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission tools:node="remove" android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+  <uses-permission tools:node="remove" android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission tools:node="remove" android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission tools:node="remove" android:name="android.permission.INSTALL_SHORTCUT" />
+  <uses-permission tools:node="remove" android:name="android.permission.WAKE_LOCK" />
+  <uses-permission tools:node="remove" android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+  <uses-permission tools:node="remove" android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission tools:node="remove" android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <!--<uses-permission tools:node="remove" android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+  <!--<uses-permission tools:node="remove" android:name="android.permission.INTERNET" />-->
+  <uses-permission tools:node="remove" android:name="android.permission.MANAGE_DOCUMENTS" />
+  <uses-permission tools:node="remove" android:name="android.permission.READ_INTERNAL_STORAGE" />
+  <uses-permission tools:node="remove" android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+  <uses-permission tools:node="remove" android:name="android.permission.USE_FINGERPRINT" />
+  <uses-permission tools:node="remove" android:name="android.permission.WAKE_LOCK" />
+  <uses-permission tools:node="remove" android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+  <uses-permission tools:node="remove" android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+  <!--<uses-permission tools:node="remove" android:name="com.google.android.c2dm.permission.RECEIVE" />-->
+  <uses-permission tools:node="remove" android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+  <uses-permission tools:node="remove" android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+  <uses-permission tools:node="remove" android:name="com.htc.launcher.permission.READ_SETTINGS" />
+  <uses-permission tools:node="remove" android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+  <uses-permission tools:node="remove" android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+  <uses-permission tools:node="remove" android:name="com.sec.android.provider.badge.permission.READ" />
+  <uses-permission tools:node="remove" android:name="com.sec.android.provider.badge.permission.WRITE" />
+  <uses-permission tools:node="remove" android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+  <uses-permission tools:node="remove" android:name="host.exp.exponent.permission.C2D_MESSAGE" />
 
 </manifest>
