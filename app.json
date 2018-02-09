@@ -2,7 +2,7 @@
   "expo": {
     "name": "Spotipaper",
     "icon": "./spotipaper-icon.png",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "slug": "spotipaper",
     "sdkVersion": "23.0.0",
     "githubUrl": "https://github.com/tommyhobbs/Spotipaper",
