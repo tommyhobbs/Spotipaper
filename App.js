@@ -88,6 +88,8 @@ export default class App extends React.Component {
 
   getCodePromise = async () => {
     const redirectUrl = AuthSession.getRedirectUrl();
+    // eslint-disable-next-line no-console
+    console.log('redirectUrl: ', redirectUrl);
     return await AuthSession.startAsync({
       authUrl:
       `https://accounts.spotify.com/authorize?response_type=code` +

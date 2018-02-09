@@ -6,11 +6,17 @@
    "slug": "spotipaper",
    "sdkVersion": "23.0.0",
    "githubUrl": "https://github.com/tommyhobbs/Spotipaper",
+   "scheme": "spotipaper",
+   "splash": {
+    "backgroundColor": "#FFFFFF",
+    "image": "./spotipaper-icon.png"
+   },
    "ios": {
      "bundleIdentifier": "com.tomhobbs.spotipaper"
    },
    "android": {
      "package": "com.tomhobbs.spotipaper",
+     "playStoreUrl": "https://play.google.com/store/apps/details?id=com.tomhobbs.spotipaper",
      "permissions": []
    }
   }
