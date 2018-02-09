@@ -4,3 +4,4 @@ node_modules/
 coverage
 npm-debug.*
 spotipaper.code-workspace
+my-release-key.keystore

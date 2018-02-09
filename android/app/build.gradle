@@ -1,3 +1,18 @@
+def getPassword(String keyChain) {
+  def stdout = new ByteArrayOutputStream()
+  def stderr = new ByteArrayOutputStream()
+  exec {
+    commandLine 'security', '-q', 'find-generic-password', '-s', keyChain, '-w'
+    standardOutput = stdout
+    errorOutput = stderr
+    ignoreExitValue true
+  }
+  //noinspection GroovyAssignabilityCheck
+  stdout.toString().trim()
+}
+
+def pass = getPassword("android_keystore")
+
 apply plugin: 'com.android.application'
 
 android {
@@ -8,8 +23,8 @@ android {
     applicationId "com.tomhobbs.spotipaper"
     minSdkVersion 19
     targetSdkVersion 25
-    versionCode 1
-    versionName "1.0"
+    versionCode 3
+    versionName "1.2"
     multiDexEnabled true
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
@@ -18,10 +33,19 @@ android {
       'appAuthRedirectScheme': 'com.tomhobbs.spotipaper'
     ]
   }
+  signingConfigs {
+    release {
+      storeFile file(MYAPP_RELEASE_STORE_FILE)
+      storePassword pass
+      keyAlias MYAPP_RELEASE_KEY_ALIAS
+      keyPassword pass
+    }
+  }
   buildTypes {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.release
     }
   }
   dexOptions {
